@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ML Assignment 2 - Loan Risk Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #0f172a; color: #e2e8f0; font-family: 'Poppins', sans-serif; padding: 40px; margin: 0; }
+        .container { max-width: 1100px; margin: auto; }
+        
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 { color: #38bdf8; font-weight: 600; margin-bottom: 10px; }
+        .header p { color: #94a3b8; }
+
+        /* Input Form */
+        .input-section {
+            background: #1e293b; border-radius: 15px; padding: 30px;
+            margin-bottom: 40px; border: 1px solid #334155;
+        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        input {
+            background: #0f172a; border: 1px solid #334155; padding: 12px;
+            border-radius: 8px; color: white; width: 100%; outline: none;
+        }
+        button {
+            grid-column: span 2; padding: 15px; background: #38bdf8;
+            color: #0b0e14; border: none; border-radius: 8px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        button:hover { background: #7dd3fc; }
+
+        /* Results Grid */
+        .results-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid #334155;
+            padding: 20px; border-radius: 20px; text-align: center;
+            position: relative;
+        }
+        .best-tag {
+            background: #4ade80; color: #064e3b; font-size: 0.65rem;
+            font-weight: bold; padding: 4px 12px; border-radius: 0 0 0 10px;
+            position: absolute; top: 0; right: 0;
+        }
+        .prediction { font-size: 1.3rem; font-weight: 600; margin: 15px 0; color: #38bdf8; }
+        .acc-text { font-size: 0.85rem; color: #94a3b8; }
+        
+        img { 
+            width: 100%; border-radius: 10px; margin-top: 15px; 
+            border: 1px solid #334155; background: #0f172a;
+        }
+
+        .note { text-align: center; margin-top: 30px; color: #f43f5e; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🏦 Loan Approval Modular Predictor</h1>
+        <p>Assignment 2: KNN vs Decision Tree vs K-Means</p>
+    </div>
+
+    <div class="input-section">
+        <form action="/predict" method="post" class="form-grid">
+            <input type="number" step="any" name="income" placeholder="Monthly Income ($)" required>
+            <input type="number" step="any" name="credit" placeholder="Credit Score (300-850)" required>
+            <input type="number" step="any" name="debt" placeholder="Debt-to-Income Ratio" required>
+            <input type="number" step="any" name="loan" placeholder="Loan Amount Requested" required>
+            <button type="submit">Execute Comparative Analysis</button>
+        </form>
+    </div>
+
+    {% if data %}
+    <div class="results-grid">
+        <!-- KNN -->
+        <div class="card">
+            <h3>KNN</h3>
+            <div class="prediction">{{ data.knn.res }}</div>
+            <div class="acc-text">Accuracy: <b>{{ data.knn.acc }}</b></div>
+            <img src="{{ url_for('static', filename=data.knn.img) }}" alt="Confusion Matrix">
+        </div>
+
+        <!-- Decision Tree (BEST) -->
+        <div class="card" style="border-color: #4ade80;">
+            <div class="best-tag">🏆 MOST ACCURATE</div>
+            <h3>Decision Tree</h3>
+            <div class="prediction" style="color: #4ade80;">{{ data.dt.res }}</div>
+            <div class="acc-text">Accuracy: <b>{{ data.dt.acc }}</b></div>
+            <img src="{{ url_for('static', filename=data.dt.img) }}" alt="Confusion Matrix">
+        </div>
+
+        <!-- K-Means -->
+        <div class="card">
+            <h3>K-Means</h3>
+            <div class="prediction">{{ data.km.res }}</div>
+            <div class="acc-text">Accuracy: <b>{{ data.km.acc }}</b></div>
+            <img src="{{ url_for('static', filename=data.km.img) }}" alt="Confusion Matrix">
+        </div>
+    </div>
+    <p class="note">⚠️ Dataset Imbalance Detected: Approved (67%) vs Rejected (33%)</p>
+    {% endif %}
+</div>
+
+</body>
+</html>
